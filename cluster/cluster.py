@@ -3,8 +3,11 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QWidget
 from PyQt5.QtGui import QPixmap, QPainter, QColor, QPen
 from PyQt5.QtCore import Qt, QTimer, QRectF
 
-width = 1280
-height = 720
+# Initialize QApplication at the top
+app = QApplication(sys.argv)
+screen_geometry = app.primaryScreen().geometry()
+width = screen_geometry.width()
+height = screen_geometry.height()
 gauge_size = int(250 * width / 800)
 
 class SpeedProgress(QWidget):
@@ -51,11 +54,11 @@ class RPMProgress(QWidget):
         painter.setPen(pen)
         painter.drawArc(rect, start_angle, span_angle)
 
-class SpeedometerWindow(QMainWindow):
+class ClusterWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Cluster")
-        self.setGeometry(0, 0, 1280, 720)
+        self.setGeometry(0, 0, width, height)
 
         # Background Image
         self.background_label = QLabel(self)
@@ -84,10 +87,16 @@ class SpeedometerWindow(QMainWindow):
         self.rpm_progress.setGeometry(self.width() - gauge_size - 50, 50, gauge_size, gauge_size)  # Match position and size with rpm_gauge
 
         # Gear State
+        gear_label_size = int(150 * width / 1280)  # Scale size relative to screen width
         self.gear_label = QLabel("D", self)
-        self.gear_label.setStyleSheet("color:white; font-size: 130px; font-weight: bold;")
+        self.gear_label.setStyleSheet("color:white; font-size: {}px; font-weight: bold;".format(int(130 * width / 1280)))
         self.gear_label.setAlignment(Qt.AlignCenter)
-        self.gear_label.setGeometry((self.width() - 150) // 2, self.height() - 200, 150, 150)
+        self.gear_label.setGeometry(
+            (self.width() - gear_label_size) // 2,  # Center horizontally
+            self.height() - int(250 * height / 720),  # Move slightly higher by increasing the offset
+            gear_label_size,  # Width
+            gear_label_size   # Height
+        )
 
         # Speed Pointer
         self.current_speed = 260  # Speed value
@@ -131,7 +140,6 @@ class SpeedometerWindow(QMainWindow):
         self.rpm_progress.setValue(self.current_rpm)      # Update RPMProgress
 
 if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    window = SpeedometerWindow()
+    window = ClusterWindow()
     window.show()
     sys.exit(app.exec_())
