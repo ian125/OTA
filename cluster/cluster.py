@@ -63,8 +63,8 @@ class ClusterWindow(QMainWindow):
         # Background Image
         self.background_label = QLabel(self)
         self.background_pixmap = QPixmap("image/back.png")
-        self.background_label.setPixmap(self.background_pixmap.scaled(self.width(), self.height(), Qt.KeepAspectRatioByExpanding))
-        self.background_label.setGeometry(0, 0, self.width(), self.height())
+        self.background_label.setPixmap(self.background_pixmap.scaled(width, height, Qt.KeepAspectRatioByExpanding))
+        self.background_label.setGeometry(0, 0, width, height)
         
 		#Speed Gauge
         self.speed_gauge = QLabel(self)
