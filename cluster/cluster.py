@@ -63,7 +63,7 @@ class ClusterWindow(QMainWindow):
         # Background Image
         self.background_label = QLabel(self)
         self.background_pixmap = QPixmap("image/back.png")
-        self.background_label.setPixmap(self.background_pixmap.scaled(width, height, Qt.KeepAspectRatioByExpanding))
+        self.background_label.setPixmap(self.background_pixmap.scaled(width, height, Qt.IgnoreAspectRatio))  # Force scaling to screen size
         self.background_label.setGeometry(0, 0, width, height)
         
 		#Speed Gauge
