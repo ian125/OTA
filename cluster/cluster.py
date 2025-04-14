@@ -1,4 +1,5 @@
 import sys
+import os
 from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QWidget
 from PyQt5.QtGui import QPixmap, QPainter, QColor, QPen
 from PyQt5.QtCore import Qt, QTimer, QRectF
@@ -9,6 +10,9 @@ screen_geometry = app.primaryScreen().geometry()
 width = screen_geometry.width()
 height = screen_geometry.height()
 gauge_size = int(250 * width / 800)
+
+# Base directory for image files
+base_dir = os.path.dirname(__file__)
 
 class SpeedProgress(QWidget):
     def __init__(self, parent=None):
@@ -62,19 +66,19 @@ class ClusterWindow(QMainWindow):
 
         # Background Image
         self.background_label = QLabel(self)
-        self.background_pixmap = QPixmap("image/back.png")
+        self.background_pixmap = QPixmap(os.path.join(base_dir, "image", "back.png"))
         self.background_label.setPixmap(self.background_pixmap.scaled(width, height, Qt.IgnoreAspectRatio))  # Force scaling to screen size
         self.background_label.setGeometry(0, 0, width, height)
         
-		#Speed Gauge
+        # Speed Gauge
         self.speed_gauge = QLabel(self)
-        self.speed_gauge_pixmap = QPixmap("image/dial.png")
+        self.speed_gauge_pixmap = QPixmap(os.path.join(base_dir, "image", "dial.png"))
         self.speed_gauge.setPixmap(self.speed_gauge_pixmap.scaled(gauge_size, gauge_size, Qt.KeepAspectRatio))
         self.speed_gauge.setGeometry(50, 50, gauge_size, gauge_size)  # Adjusted position and size
 
         # RPM Gauge
         self.rpm_gauge = QLabel(self)
-        self.rpm_gauge_pixmap = QPixmap("image/rpm.png")
+        self.rpm_gauge_pixmap = QPixmap(os.path.join(base_dir, "image", "rpm.png"))
         self.rpm_gauge.setPixmap(self.rpm_gauge_pixmap.scaled(gauge_size, gauge_size, Qt.KeepAspectRatio))
         self.rpm_gauge.setGeometry(self.width() - gauge_size - 50, 50, gauge_size, gauge_size)  # Adjusted position and size
 
