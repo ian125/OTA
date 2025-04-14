@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Upload with Progress Bar</title>
+    <style>
+        /* 전체 화면 중앙 배치 */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f4f4f9;
+            font-family: Arial, sans-serif;
+        }
+
+        /* 업로드 박스 스타일 */
+        .upload-box {
+            width: 60%; /* Increased width */
+            max-width: 600px; /* Increased max width */
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .upload-box h1 {
+            font-size: 24px;
+            color: #333333;
+            margin-bottom: 20px;
+        }
+
+        .upload-box input[type="file"],
+        .upload-box input[type="text"],
+        .upload-box input[type="password"] {
+            width: 90%; /* Increased input width */
+            padding: 10px; /* Added padding for better usability */
+            font-size: 16px; /* Increased font size */
+            margin-bottom: 20px;
+        }
+
+        /* 로딩바 컨테이너 */
+        .progress-bar-container {
+            width: 100%;
+            background-color: #f3f3f3;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-top: 20px;
+            height: 20px;
+            display: none; /* 기본적으로 숨김 */
+        }
+
+        /* 로딩바 */
+        .progress-bar {
+            width: 0%;
+            height: 100%;
+            background-color: #4caf50;
+            transition: width 0.3s;
+        }
+
+        /* 상태 텍스트 */
+        #status {
+            margin-top: 10px;
+            font-weight: bold;
+            color: #333333;
+        }
+
+        /* 업로드 버튼 */
+        .upload-box button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .upload-box button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="upload-box">
+        <h1>Upload Your File</h1>
+        <form id="upload-form" enctype="multipart/form-data">
+            <input type="file" id="file-input" name="file" required>
+            <br>
+            <input type="text" id="username" name="username" placeholder="MQTT Username" required>
+            <br>
+            <input type="password" id="password" name="password" placeholder="MQTT Password" required>
+            <br>
+            <button type="button" onclick="uploadFile()">Upload</button>
+        </form>
+        <div class="progress-bar-container" id="progress-bar-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+        <div id="status"></div>
+    </div>
+
+    <script>
+        function uploadFile() {
+            const fileInput = document.getElementById("file-input");
+            const progressBarContainer = document.getElementById("progress-bar-container");
+            const progressBar = document.getElementById("progress-bar");
+            const status = document.getElementById("status");
+
+            // 초기화
+            status.textContent = "";
+            progressBar.style.width = "0%";
+            progressBarContainer.style.display = "block";
+
+            // Check if a file is selected
+            if (!fileInput.files[0]) {
+                alert("Please select a file.");
+                progressBarContainer.style.display = "none";
+                return;
+            }
+
+            const file = fileInput.files[0];
+            const formData = new FormData();
+            formData.append("file", file);
+            formData.append("username",document.getElementById("username").value);
+            formData.append("password", document.getElementById("password").value);
+
+            const xhr = new XMLHttpRequest();
+
+            xhr.open("POST", "/upload", true);
+
+            // Update progress bar during upload
+            xhr.upload.onprogress = function (event) {
+                if (event.lengthComputable) {
+                    const percentComplete = (event.loaded / event.total) * 100;
+                    progressBar.style.width = percentComplete + "%";
+                    status.textContent = `Uploading... ${Math.round(percentComplete)}%`;
+                }
+            };
+
+            // Handle completion
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    progressBarContainer.style.display = "none"; // 로딩바 숨기기
+                    status.textContent = "Upload Complete!";
+                } else {
+                    progressBarContainer.style.display = "none";
+                    status.textContent = "Upload Failed.";
+                }
+            };
+
+            // Handle errors
+            xhr.onerror = function () {
+                progressBarContainer.style.display = "none";
+                status.textContent = "Upload Error.";
+            };
+
+            xhr.send(formData);
+        }
+
+        // 파일 선택 시 상태 및 로딩바 초기화
+        document.getElementById("file-input").addEventListener("change", function () {
+            const progressBarContainer = document.getElementById("progress-bar-container");
+            const progressBar = document.getElementById("progress-bar");
+            const status = document.getElementById("status");
+
+            status.textContent = "";
+            progressBar.style.width = "0%";
+            progressBarContainer.style.display = "none";
+        });
+    </script>
+</body>
+</html>
