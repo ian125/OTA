@@ -1,4 +1,5 @@
 from canlib import canlib, Frame
+import time
 
 # Kvaser 연결 및 설정 class
 class Kvaser:
