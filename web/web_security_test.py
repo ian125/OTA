@@ -40,7 +40,7 @@ def upload_file():
                 approved_user = line.split(":")[0].strip()
                 approved_pw = line.split(":")[1].strip()
                 if username == approved_user and password_hash == approved_pw:
-                    print(f"승이뇐 사용자 {approved_user}")
+                    print(f"승인된된 사용자 {approved_user}")
                     if file.filename == '':
                         flash('파일이 존재하지 않습니다.')
                         return redirect(url_for('upload_form'))
